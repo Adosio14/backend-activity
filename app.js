@@ -1,4 +1,6 @@
 const express = require('express')
+const fs = require('fs')
+const { get } = require('http')
 const app = express()
 
 
@@ -13,9 +15,25 @@ let checkHeader = function(req, res, next){
         return res.status(401).send('Unathorized')
     }
 }
+let logger = function(req, res, next){
+    let today = new Date();
+    let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    let data = ` ${req.ip}, ${date}, ${time} `
+    fs.writeFile(date +'.'+'log' , '' , function(err){
+        if (err) throw err;
+    })
+    if (fs.existsSync(date +'.'+'log') === true){
+        fs.appendFile(date +'.'+'log', data + "\n", {encoding: 'utf8', flag: 'a'}, err =>{
+            if (err) throw err;
+        } )
+        next()
+    }
+}
 
 // App
-app.use(checkHeader)
+//app.use(checkHeader)
+app.use(logger)
 
 
 app.get('/', function(req,res){
