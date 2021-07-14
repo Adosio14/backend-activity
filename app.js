@@ -1,8 +1,9 @@
 const express = require('express')
+const dontenv = require('dotenv')
 const fs = require('fs')
 const { get } = require('http')
 const app = express()
-
+dontenv.config()
 
 
 // MiddleWare
@@ -39,4 +40,4 @@ app.get('/home', function(req,res){
 })
 
 
-app.listen(4000)
+app.listen(process.env.PORT)
