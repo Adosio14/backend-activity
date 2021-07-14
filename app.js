@@ -19,24 +19,22 @@ let logger = function(req, res, next){
     let today = new Date();
     let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
     let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-    let data = ` ${req.ip}, ${date}, ${time} `
-    fs.writeFile(date +'.'+'log' , '' , function(err){
+    let data = ` ${req.ip}, ${date} ${time}, ${req.method}, ${req.path} \r\n` 
+    fs.appendFileSync(date +'.'+'log' , data , function(err){
         if (err) throw err;
     })
-    if (fs.existsSync(date +'.'+'log') === true){
-        fs.appendFile(date +'.'+'log', data + "\n", {encoding: 'utf8', flag: 'a'}, err =>{
-            if (err) throw err;
-        } )
-        next()
-    }
+    next()
 }
 
 // App
-//app.use(checkHeader)
+app.use(checkHeader)
 app.use(logger)
 
 
 app.get('/', function(req,res){
+    res.sendFile(__dirname+'/src/views/home.html')
+})
+app.get('/home', function(req,res){
     res.sendFile(__dirname+'/src/views/home.html')
 })
 
